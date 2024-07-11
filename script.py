@@ -6,6 +6,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException  # Import TimeoutException
+from selenium.webdriver import ActionChains
 import time
 import openai
 
@@ -26,25 +27,40 @@ def upload_and_screenshot(ifc_file_path):
             EC.element_to_be_clickable((By.XPATH, '//button[@id="enterAsGuest" and contains(@class, "landing-secondary")]'))
         )
         guest_login_button.click()
-        WebDriverWait(driver, 10).until(
-        EC.visibility_of_element_located((By.XPATH, '//div[@id="guestLoginSuccessMessage"]'))
-        )
+        # WebDriverWait(driver, 10).until(
+        # EC.visibility_of_element_located((By.XPATH, '//div[@id="guestLoginSuccessMessage"]'))
+        # )
         # Wait for the upload button to be clickable
         upload_button = WebDriverWait(driver, 20).until(
             EC.element_to_be_clickable((By.ID, 'btnUpload'))
         )
         # Scroll the upload button into view if needed
-        driver.execute_script("arguments[0].scrollIntoView();", upload_button)
+        # driver.execute_script("arguments[0].scrollIntoView();", upload_button)
         
         # Click the upload button
         upload_button.click()
+
+         # Locate the file input element
+        file_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, 'fileOpen'))  # Adjust ID as per your HTML structure
+        )
+    
+        # Provide the path of the file to upload
+        file_path = '/home/toobler/projects/automationScriptIFC/0f887018aee343c19f9361baef346187.ifc'  # Replace with your actual file path
+        file_input.send_keys(file_path)
+        WebDriverWait(driver, 20).until(
+        EC.visibility_of_element_located((By.XPATH, '//div[@id="uploadSuccessMessage"]'))
+        )
+        # screenshot_path = "/home/toobler/projects/automationScriptIFC/screenshot.png"  # Replace with your desired path
+        # driver.save_screenshot(screenshot_path)
+
         
         # driver.find_element(By.LINK_TEXT, "Upload").click()
         # driver.find_element(By.ID, "wpUploadFile").send_keys(ifc_file_path)
         # driver.find_element(By.ID, "wpUploadFile").submit()
         
         # # Wait for the upload to complete (adjust time or use WebDriverWait for better handling)
-        # time.sleep(10)
+        time.sleep(10)
         
         # # Take a screenshot
         # screenshot_path = "screenshot.png"
